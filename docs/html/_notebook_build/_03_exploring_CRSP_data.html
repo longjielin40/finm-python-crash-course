@@ -1,0 +1,2552 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>3.3 Exploring CRSP Data with Python &#8212; FINM August Review: Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=e1a75a79"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_notebook_build/_03_exploring_CRSP_data';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.4 CRSP Market Returns Indices" href="_03_CRSP_market_index.html" />
+    <link rel="prev" title="3.2 Connecting to the WRDS Platform With Python" href="_03_wrds_python_package.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="FINM August Review: Python - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="FINM August Review: Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    FINM August Review: Python
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Discussion 1</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../discussion_01.html">1. Agenda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_setting_up_environment.html">1.1 Setting up your computing environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_methods_for_using_python.html">1.2 Ways to Interact with Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_vscode_cursor.html">1.3 VS Code and Cursor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_environment_faq.html">1.4 Common Errors When Setting Up VS Code and Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../HW1.html">Homework 1: Introduction to VS Code and Git</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Discussion 2</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../discussion_02.html">2. Agenda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../syncing_files_with_git_and_github.html">2.1 Syncing Files with Git and GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../WRDS_intro_and_web_queries.html">2.2 Introduction to WRDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_02_01-Introducing-Pandas-Objects.html">2.3 Introducing Pandas Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_02_02-Data-Indexing-and-Selection.html">2.4 Data Indexing and Selection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_02_03-Operations-in-Pandas.html">2.5 Operating on Data in Pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_02_04-Missing-Values.html">2.6 Handling Missing Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_HW2-numpy-scipy.html">Homework 2: Numpy, Scipy, and Matplotlib</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Discussion 3</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../discussion_03.html">3. Agenda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_CRSP_data.html">3.1 Using CRSP Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_03_wrds_python_package.html">3.2 Connecting to the WRDS Platform With Python</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">3.3 Exploring CRSP Data with Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_03_CRSP_market_index.html">3.4 CRSP Market Returns Indices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../HW3.html">Homework 3: Introduction to WRDS and CRSP</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Discussion 4️</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../discussion_04.html">4. Agenda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_03_overview_of_pydata_stack.html">4.1 Overview of the PyData Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_03_comparing_plotting_libraries.html">4.2 Comparing Plotting Libraries and Declarative Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_03_Using_Interact.html">4.3 Using Interact (Optional)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_03_python_by_example.html">4.4 Python Basics: An Introductory Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_03_factor_analysis_demo.html">4.5 Factor Analysis on Financial and Economic Time Series</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../myst_markdown_demos.html">MyST Markdown Demos 💡</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../apidocs/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../apidocs/misc_tools/misc_tools.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_tools</span></code></a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/jmbejara/finm-python-crash-course" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/jmbejara/finm-python-crash-course/issues/new?title=Issue%20on%20page%20%2F_notebook_build/_03_exploring_CRSP_data.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/_notebook_build/_03_exploring_CRSP_data.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>3.3 Exploring CRSP Data with Python</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-source">Data Source</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-crsp-data-structure">Understanding CRSP Data Structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#finding-the-pre-merged-table">Finding the Pre-merged Table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-the-data-query">Defining the Data Query</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-summary-and-exploration">Data Summary and Exploration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identifying-well-known-stocks">Identifying Well-Known Stocks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#selecting-stocks-for-analysis">Selecting Stocks for Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-quality-check">Data Quality Check</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculating-cumulative-returns">Calculating Cumulative Returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-1-matplotlib-cumulative-returns-comparison">Plot 1: Matplotlib - Cumulative Returns Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-2-seaborn-cumulative-returns-with-better-styling">Plot 2: Seaborn - Cumulative Returns with Better Styling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-3-plotly-express-interactive-cumulative-returns">Plot 3: Plotly Express - Interactive Cumulative Returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dividend-analysis">Dividend Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-4-matplotlib-cumulative-dividends">Plot 4: Matplotlib - Cumulative Dividends</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-5-seaborn-dividend-comparison">Plot 5: Seaborn - Dividend Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-6-plotly-express-interactive-dividends">Plot 6: Plotly Express - Interactive Dividends</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rolling-volatility-analysis">Rolling Volatility Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-7-matplotlib-rolling-volatility">Plot 7: Matplotlib - Rolling Volatility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-8-seaborn-volatility-comparison">Plot 8: Seaborn - Volatility Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-9-plotly-express-interactive-volatility">Plot 9: Plotly Express - Interactive Volatility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-statistics">Summary Statistics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-complete">Analysis Complete</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="exploring-crsp-data-with-python">
+<h1>3.3 Exploring CRSP Data with Python<a class="headerlink" href="#exploring-crsp-data-with-python" title="Link to this heading">#</a></h1>
+<p>This script demonstrates how to explore and analyze CRSP daily stock data using various Python plotting libraries.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>We’ll analyze CRSP daily stock data for selected stocks (AAPL, JNJ, TSLA) and compare their performance against the S&amp;P 500 index. The analysis includes:</p>
+<ul class="simple">
+<li><p>Cumulative returns comparison</p></li>
+<li><p>Dividend analysis</p></li>
+<li><p>Rolling volatility analysis</p></li>
+<li><p>Multiple plotting approaches (Matplotlib, Seaborn, Plotly)</p></li>
+</ul>
+</section>
+<section id="data-source">
+<h2>Data Source<a class="headerlink" href="#data-source" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>CRSP Daily Stock File v2 (DSF) via WRDS</p></li>
+<li><p>Filtered for common stock universe with proper exchange and trading filters</p></li>
+<li><p>Date range: 2019-2025</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">wrds</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">plotly.subplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_subplots</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">config</span>
+
+<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">DATA_DIR</span>
+<span class="n">WRDS_USERNAME</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">WRDS_USERNAME</span>
+
+<span class="n">db</span> <span class="o">=</span> <span class="n">wrds</span><span class="o">.</span><span class="n">Connection</span><span class="p">(</span><span class="n">wrds_username</span><span class="o">=</span><span class="n">WRDS_USERNAME</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading library list...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Done
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="understanding-crsp-data-structure">
+<h2>Understanding CRSP Data Structure<a class="headerlink" href="#understanding-crsp-data-structure" title="Link to this heading">#</a></h2>
+<p>To find the right table, we use a combination of the web query interface and the SAS Studio explorer.
+The web query interface is available at:
+<a class="reference external" href="https://wrds-www.wharton.upenn.edu/pages/get-data/center-research-security-prices-crsp/annual-update/stock-version-2/daily-stock-file/">https://wrds-www.wharton.upenn.edu/pages/get-data/center-research-security-prices-crsp/annual-update/stock-version-2/daily-stock-file/</a></p>
+<p>Note: Web queries often use merges of tables from many different sources. The results of these merges are not usually available through the Python API interface. Often, you’ll have to merge the tables yourself.</p>
+<p>However, in this case, we can use the SAS Studio explorer to find the right table. Lucky for us, the data in the web query is available in a pre-merged table available through the Python API.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># First, let&#39;s look at the standard daily stock file (DSF) from the CIZ format</span>
+<span class="n">dsf</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">library</span><span class="o">=</span><span class="s2">&quot;crsp&quot;</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s2">&quot;dsf_v2&quot;</span><span class="p">,</span> <span class="n">obs</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">dsf</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>permno</th>
+      <th>hdrcusip</th>
+      <th>permco</th>
+      <th>siccd</th>
+      <th>nasdissuno</th>
+      <th>yyyymmdd</th>
+      <th>sharetype</th>
+      <th>securitytype</th>
+      <th>securitysubtype</th>
+      <th>usincflg</th>
+      <th>...</th>
+      <th>dlyopen</th>
+      <th>dlynumtrd</th>
+      <th>dlymmcnt</th>
+      <th>dlyprcvol</th>
+      <th>dlycumfacpr</th>
+      <th>dlycumfacshr</th>
+      <th>cusip</th>
+      <th>ticker</th>
+      <th>exchangetier</th>
+      <th>shrout</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10000</td>
+      <td>68391610</td>
+      <td>7952</td>
+      <td>3990</td>
+      <td>10396</td>
+      <td>19860107</td>
+      <td>NS</td>
+      <td>EQTY</td>
+      <td>COM</td>
+      <td>Y</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>9</td>
+      <td>2562.5</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>68391610</td>
+      <td>OMFGA</td>
+      <td>SC1</td>
+      <td>3680</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>10000</td>
+      <td>68391610</td>
+      <td>7952</td>
+      <td>3990</td>
+      <td>10396</td>
+      <td>19860108</td>
+      <td>NS</td>
+      <td>EQTY</td>
+      <td>COM</td>
+      <td>Y</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>9</td>
+      <td>32000.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>68391610</td>
+      <td>OMFGA</td>
+      <td>SC1</td>
+      <td>3680</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10000</td>
+      <td>68391610</td>
+      <td>7952</td>
+      <td>3990</td>
+      <td>10396</td>
+      <td>19860109</td>
+      <td>NS</td>
+      <td>EQTY</td>
+      <td>COM</td>
+      <td>Y</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>9</td>
+      <td>3500.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>68391610</td>
+      <td>OMFGA</td>
+      <td>SC1</td>
+      <td>3680</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>10000</td>
+      <td>68391610</td>
+      <td>7952</td>
+      <td>3990</td>
+      <td>10396</td>
+      <td>19860110</td>
+      <td>NS</td>
+      <td>EQTY</td>
+      <td>COM</td>
+      <td>Y</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>10</td>
+      <td>21250.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>68391610</td>
+      <td>OMFGA</td>
+      <td>SC1</td>
+      <td>3680</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>10000</td>
+      <td>68391610</td>
+      <td>7952</td>
+      <td>3990</td>
+      <td>10396</td>
+      <td>19860113</td>
+      <td>NS</td>
+      <td>EQTY</td>
+      <td>COM</td>
+      <td>Y</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>10</td>
+      <td>14306.3</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>68391610</td>
+      <td>OMFGA</td>
+      <td>SC1</td>
+      <td>3680</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 50 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dsf</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 10 entries, 0 to 9
+Data columns (total 50 columns):
+ #   Column            Non-Null Count  Dtype  
+---  ------            --------------  -----  
+ 0   permno            10 non-null     Int64  
+ 1   hdrcusip          10 non-null     string 
+ 2   permco            10 non-null     Int64  
+ 3   siccd             10 non-null     Int64  
+ 4   nasdissuno        10 non-null     Int64  
+ 5   yyyymmdd          10 non-null     Int64  
+ 6   sharetype         10 non-null     string 
+ 7   securitytype      10 non-null     string 
+ 8   securitysubtype   10 non-null     string 
+ 9   usincflg          10 non-null     string 
+ 10  issuertype        10 non-null     string 
+ 11  primaryexch       10 non-null     string 
+ 12  conditionaltype   10 non-null     string 
+ 13  tradingstatusflg  10 non-null     string 
+ 14  dlycaldt          10 non-null     string 
+ 15  dlydelflg         10 non-null     string 
+ 16  dlyprc            10 non-null     Float64
+ 17  dlyprcflg         10 non-null     string 
+ 18  dlycap            10 non-null     Float64
+ 19  dlycapflg         10 non-null     string 
+ 20  dlyprevprc        9 non-null      Float64
+ 21  dlyprevprcflg     10 non-null     string 
+ 22  dlyprevdt         9 non-null      string 
+ 23  dlyprevcap        9 non-null      Float64
+ 24  dlyprevcapflg     10 non-null     string 
+ 25  dlyret            9 non-null      Float64
+ 26  dlyretx           9 non-null      Float64
+ 27  dlyreti           9 non-null      Float64
+ 28  dlyretmissflg     10 non-null     string 
+ 29  dlyretdurflg      10 non-null     string 
+ 30  dlyorddivamt      10 non-null     Float64
+ 31  dlynonorddivamt   10 non-null     Float64
+ 32  dlyfacprc         10 non-null     Float64
+ 33  dlydistretflg     10 non-null     string 
+ 34  dlyvol            10 non-null     Float64
+ 35  dlyclose          0 non-null      string 
+ 36  dlylow            0 non-null      string 
+ 37  dlyhigh           0 non-null      string 
+ 38  dlybid            10 non-null     Float64
+ 39  dlyask            10 non-null     Float64
+ 40  dlyopen           0 non-null      string 
+ 41  dlynumtrd         0 non-null      string 
+ 42  dlymmcnt          10 non-null     Int64  
+ 43  dlyprcvol         10 non-null     Float64
+ 44  dlycumfacpr       10 non-null     Float64
+ 45  dlycumfacshr      10 non-null     Float64
+ 46  cusip             10 non-null     string 
+ 47  ticker            10 non-null     string 
+ 48  exchangetier      10 non-null     string 
+ 49  shrout            10 non-null     Int64  
+dtypes: Float64(16), Int64(7), string(27)
+memory usage: 4.3 KB
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="finding-the-pre-merged-table">
+<h2>Finding the Pre-merged Table<a class="headerlink" href="#finding-the-pre-merged-table" title="Link to this heading">#</a></h2>
+<p>Now, let’s find the pre-merged table that contains the data we want.
+Notice that it corresponds to the web query we used above.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">library</span><span class="o">=</span><span class="s2">&quot;crsp&quot;</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s2">&quot;wrds_dsfv2_query&quot;</span><span class="p">,</span> <span class="n">obs</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>permno</th>
+      <th>secinfostartdt</th>
+      <th>secinfoenddt</th>
+      <th>securitybegdt</th>
+      <th>securityenddt</th>
+      <th>securityhdrflg</th>
+      <th>hdrcusip</th>
+      <th>hdrcusip9</th>
+      <th>cusip</th>
+      <th>cusip9</th>
+      <th>...</th>
+      <th>disrecorddt</th>
+      <th>dispaydt</th>
+      <th>dispermno</th>
+      <th>dispermco</th>
+      <th>disamountsourcetype</th>
+      <th>vwretd</th>
+      <th>vwretx</th>
+      <th>ewretd</th>
+      <th>ewretx</th>
+      <th>sprtrn</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10000</td>
+      <td>1986-01-07</td>
+      <td>1986-12-03</td>
+      <td>1986-01-07</td>
+      <td>1987-06-11</td>
+      <td>N</td>
+      <td>68391610</td>
+      <td>683916100</td>
+      <td>68391610</td>
+      <td>683916100</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.013809</td>
+      <td>0.0138</td>
+      <td>0.011061</td>
+      <td>0.011046</td>
+      <td>0.014954</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>10000</td>
+      <td>1986-01-07</td>
+      <td>1986-12-03</td>
+      <td>1986-01-07</td>
+      <td>1987-06-11</td>
+      <td>N</td>
+      <td>68391610</td>
+      <td>683916100</td>
+      <td>68391610</td>
+      <td>683916100</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>-0.020744</td>
+      <td>-0.02075</td>
+      <td>-0.005117</td>
+      <td>-0.005135</td>
+      <td>-0.027269</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10000</td>
+      <td>1986-01-07</td>
+      <td>1986-12-03</td>
+      <td>1986-01-07</td>
+      <td>1987-06-11</td>
+      <td>N</td>
+      <td>68391610</td>
+      <td>683916100</td>
+      <td>68391610</td>
+      <td>683916100</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>-0.011219</td>
+      <td>-0.011315</td>
+      <td>-0.011588</td>
+      <td>-0.01166</td>
+      <td>-0.008944</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>10000</td>
+      <td>1986-01-07</td>
+      <td>1986-12-03</td>
+      <td>1986-01-07</td>
+      <td>1987-06-11</td>
+      <td>N</td>
+      <td>68391610</td>
+      <td>683916100</td>
+      <td>68391610</td>
+      <td>683916100</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.000083</td>
+      <td>0.000047</td>
+      <td>0.003651</td>
+      <td>0.003632</td>
+      <td>-0.000728</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>10000</td>
+      <td>1986-01-07</td>
+      <td>1986-12-03</td>
+      <td>1986-01-07</td>
+      <td>1987-06-11</td>
+      <td>N</td>
+      <td>68391610</td>
+      <td>683916100</td>
+      <td>68391610</td>
+      <td>683916100</td>
+      <td>...</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.00275</td>
+      <td>0.00268</td>
+      <td>0.002433</td>
+      <td>0.002369</td>
+      <td>0.00369</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 98 columns</p>
+</div></div></div>
+</div>
+<p>Note: We actually just made a mistake above. For some reason, we aren’t allowed to access this via “crspa”, but we are via “crsp”.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 10 entries, 0 to 9
+Data columns (total 98 columns):
+ #   Column               Non-Null Count  Dtype  
+---  ------               --------------  -----  
+ 0   permno               10 non-null     Int64  
+ 1   secinfostartdt       10 non-null     string 
+ 2   secinfoenddt         10 non-null     string 
+ 3   securitybegdt        10 non-null     string 
+ 4   securityenddt        10 non-null     string 
+ 5   securityhdrflg       10 non-null     string 
+ 6   hdrcusip             10 non-null     string 
+ 7   hdrcusip9            10 non-null     string 
+ 8   cusip                10 non-null     string 
+ 9   cusip9               10 non-null     string 
+ 10  primaryexch          10 non-null     string 
+ 11  conditionaltype      10 non-null     string 
+ 12  exchangetier         10 non-null     string 
+ 13  tradingstatusflg     10 non-null     string 
+ 14  securitynm           10 non-null     string 
+ 15  shareclass           10 non-null     string 
+ 16  usincflg             10 non-null     string 
+ 17  issuertype           10 non-null     string 
+ 18  securitytype         10 non-null     string 
+ 19  securitysubtype      10 non-null     string 
+ 20  sharetype            10 non-null     string 
+ 21  securityactiveflg    10 non-null     string 
+ 22  delactiontype        10 non-null     string 
+ 23  delstatustype        10 non-null     string 
+ 24  delreasontype        10 non-null     string 
+ 25  delpaymenttype       10 non-null     string 
+ 26  ticker               10 non-null     string 
+ 27  tradingsymbol        10 non-null     string 
+ 28  permco               10 non-null     Int64  
+ 29  siccd                10 non-null     Int64  
+ 30  naics                10 non-null     string 
+ 31  icbindustry          10 non-null     string 
+ 32  uesindustry          10 non-null     string 
+ 33  nasdcompno           10 non-null     Int64  
+ 34  nasdissuno           10 non-null     Int64  
+ 35  issuernm             10 non-null     string 
+ 36  yyyymmdd             10 non-null     Int64  
+ 37  dlycaldt             10 non-null     string 
+ 38  dlydelflg            10 non-null     string 
+ 39  dlyprc               10 non-null     Float64
+ 40  dlyprcflg            10 non-null     string 
+ 41  dlycap               10 non-null     Float64
+ 42  dlycapflg            10 non-null     string 
+ 43  dlyprevprc           9 non-null      Float64
+ 44  dlyprevprcflg        10 non-null     string 
+ 45  dlyprevdt            9 non-null      string 
+ 46  dlyprevcap           9 non-null      Float64
+ 47  dlyprevcapflg        10 non-null     string 
+ 48  dlyret               9 non-null      Float64
+ 49  dlyretx              9 non-null      Float64
+ 50  dlyreti              9 non-null      Float64
+ 51  dlyretmissflg        10 non-null     string 
+ 52  dlyretdurflg         10 non-null     string 
+ 53  dlyorddivamt         10 non-null     Float64
+ 54  dlynonorddivamt      10 non-null     Float64
+ 55  dlyfacprc            10 non-null     Float64
+ 56  dlydistretflg        10 non-null     string 
+ 57  dlyvol               10 non-null     Float64
+ 58  dlyclose             0 non-null      string 
+ 59  dlylow               0 non-null      string 
+ 60  dlyhigh              0 non-null      string 
+ 61  dlybid               10 non-null     Float64
+ 62  dlyask               10 non-null     Float64
+ 63  dlyopen              0 non-null      string 
+ 64  dlynumtrd            0 non-null      string 
+ 65  dlymmcnt             10 non-null     Int64  
+ 66  dlyprcvol            10 non-null     Float64
+ 67  shrstartdt           10 non-null     string 
+ 68  shrenddt             10 non-null     string 
+ 69  shrout               10 non-null     Int64  
+ 70  shrsource            10 non-null     string 
+ 71  shrfactype           10 non-null     string 
+ 72  shradrflg            10 non-null     string 
+ 73  dlycumfacpr          10 non-null     Float64
+ 74  dlycumfacshr         10 non-null     Float64
+ 75  disexdt              0 non-null      string 
+ 76  disseqnbr            0 non-null      string 
+ 77  disordinaryflg       0 non-null      string 
+ 78  distype              0 non-null      string 
+ 79  disfreqtype          0 non-null      string 
+ 80  dispaymenttype       0 non-null      string 
+ 81  disdetailtype        0 non-null      string 
+ 82  distaxtype           0 non-null      string 
+ 83  disorigcurtype       0 non-null      string 
+ 84  disdivamt            0 non-null      string 
+ 85  disfacpr             0 non-null      string 
+ 86  disfacshr            0 non-null      string 
+ 87  disdeclaredt         0 non-null      string 
+ 88  disrecorddt          0 non-null      string 
+ 89  dispaydt             0 non-null      string 
+ 90  dispermno            0 non-null      string 
+ 91  dispermco            0 non-null      string 
+ 92  disamountsourcetype  0 non-null      string 
+ 93  vwretd               10 non-null     Float64
+ 94  vwretx               10 non-null     Float64
+ 95  ewretd               10 non-null     Float64
+ 96  ewretx               10 non-null     Float64
+ 97  sprtrn               10 non-null     Float64
+dtypes: Float64(21), Int64(8), string(69)
+memory usage: 8.1 KB
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice that this now matches the web query variables list.</p>
+</section>
+<section id="defining-the-data-query">
+<h2>Defining the Data Query<a class="headerlink" href="#defining-the-data-query" title="Link to this heading">#</a></h2>
+<p>Now, let’s explore some of the columns. But first, we need to download more data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">SELECT </span>
+<span class="s2">    permno, </span>
+<span class="s2">    permco, </span>
+<span class="s2">    dlycaldt, </span>
+<span class="s2">    issuertype, </span>
+<span class="s2">    securitytype, </span>
+<span class="s2">    securitysubtype, </span>
+<span class="s2">    sharetype, </span>
+<span class="s2">    usincflg, </span>
+<span class="s2">    primaryexch, </span>
+<span class="s2">    conditionaltype, </span>
+<span class="s2">    tradingstatusflg,</span>
+<span class="s2">    dlyret, </span>
+<span class="s2">    dlyretx, </span>
+<span class="s2">    dlyreti,</span>
+<span class="s2">    dlyorddivamt,</span>
+<span class="s2">    dlynonorddivamt,</span>
+<span class="s2">    shrout, </span>
+<span class="s2">    dlyprc,</span>
+<span class="s2">    ticker,</span>
+<span class="s2">    securitynm,</span>
+<span class="s2">    sprtrn,</span>
+<span class="s2">    vwretd</span>
+<span class="s2">FROM </span>
+<span class="s2">    crsp.wrds_dsfv2_query</span>
+<span class="s2">WHERE </span>
+<span class="s2">    dlycaldt between &#39;01/01/2019&#39; and &#39;01/01/2025&#39; AND</span>
+<span class="s2">    sharetype = &#39;NS&#39; AND</span>
+<span class="s2">    securitytype = &#39;EQTY&#39; AND</span>
+<span class="s2">    securitysubtype = &#39;COM&#39; AND</span>
+<span class="s2">    usincflg = &#39;Y&#39; AND</span>
+<span class="s2">    issuertype IN (&#39;ACOR&#39;, &#39;CORP&#39;) AND</span>
+<span class="s2">    primaryexch IN (&#39;N&#39;, &#39;A&#39;, &#39;Q&#39;) AND</span>
+<span class="s2">    conditionaltype = &#39;RW&#39; AND</span>
+<span class="s2">    tradingstatusflg = &#39;A&#39;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">pull_crsp_sample</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="n">DATA_DIR</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pull CRSP daily stock data with comprehensive filtering for common stock universe.</span>
+<span class="sd">    </span>
+<span class="sd">    This function implements the equivalent of legacy CRSP filters:</span>
+<span class="sd">    - shrcd = 10 or 11 (common stock)</span>
+<span class="sd">    - exchcd = 1, 2, or 3 (NYSE, AMEX, NASDAQ)</span>
+<span class="sd">    </span>
+<span class="sd">    Filters applied:</span>
+<span class="sd">    1. Date range: 2019-2025</span>
+<span class="sd">    2. Common stock universe:</span>
+<span class="sd">       - sharetype = &#39;NS&#39; (New Shares)</span>
+<span class="sd">       - securitytype = &#39;EQTY&#39; (Equity)</span>
+<span class="sd">       - securitysubtype = &#39;COM&#39; (Common Stock)</span>
+<span class="sd">       - usincflg = &#39;Y&#39; (US Incorporated)</span>
+<span class="sd">       - issuertype IN (&#39;ACOR&#39;, &#39;CORP&#39;) (Accordion or Corporate)</span>
+<span class="sd">    3. Exchange and trading filters:</span>
+<span class="sd">       - primaryexch IN (&#39;N&#39;, &#39;A&#39;, &#39;Q&#39;) (NYSE, AMEX, NASDAQ)</span>
+<span class="sd">       - conditionaltype = &#39;RW&#39; (Regular Way trading)</span>
+<span class="sd">       - tradingstatusflg = &#39;A&#39; (Active trading status)</span>
+<span class="sd">    </span>
+<span class="sd">    Caching:</span>
+<span class="sd">    - Data is cached locally as a parquet file to avoid repeated WRDS queries</span>
+<span class="sd">    - If cached data exists, it loads from disk instead of querying WRDS</span>
+<span class="sd">    - If no cache exists, queries WRDS and saves the result for future use</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        data_dir: Directory to store/load cached data</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        DataFrame: Filtered CRSP daily stock data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_path</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;crsp_dsf_v2_example.parquet&quot;</span>
+    <span class="k">if</span> <span class="n">data_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">date_cols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dlycaldt&quot;</span><span class="p">])</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pull_crsp_sample</span><span class="p">()</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>permno</th>
+      <th>permco</th>
+      <th>dlycaldt</th>
+      <th>issuertype</th>
+      <th>securitytype</th>
+      <th>securitysubtype</th>
+      <th>sharetype</th>
+      <th>usincflg</th>
+      <th>primaryexch</th>
+      <th>conditionaltype</th>
+      <th>...</th>
+      <th>dlyretx</th>
+      <th>dlyreti</th>
+      <th>dlyorddivamt</th>
+      <th>dlynonorddivamt</th>
+      <th>shrout</th>
+      <th>dlyprc</th>
+      <th>ticker</th>
+      <th>securitynm</th>
+      <th>sprtrn</th>
+      <th>vwretd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10026</td>
+      <td>7976</td>
+      <td>2019-01-02</td>
+      <td>CORP</td>
+      <td>EQTY</td>
+      <td>COM</td>
+      <td>NS</td>
+      <td>Y</td>
+      <td>Q</td>
+      <td>RW</td>
+      <td>...</td>
+      <td>-0.024829</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>18774</td>
+      <td>141.0</td>
+      <td>JJSF</td>
+      <td>J &amp; J SNACK FOODS CORP; COM NONE; CONS</td>
+      <td>0.001269</td>
+      <td>0.001796</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>10028</td>
+      <td>7978</td>
+      <td>2019-01-02</td>
+      <td>CORP</td>
+      <td>EQTY</td>
+      <td>COM</td>
+      <td>NS</td>
+      <td>Y</td>
+      <td>A</td>
+      <td>RW</td>
+      <td>...</td>
+      <td>-0.043488</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>26924</td>
+      <td>0.4399</td>
+      <td>DGSE</td>
+      <td>D G S E COMPANIES INC; COM NONE; CONS</td>
+      <td>0.001269</td>
+      <td>0.001796</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10032</td>
+      <td>7980</td>
+      <td>2019-01-02</td>
+      <td>CORP</td>
+      <td>EQTY</td>
+      <td>COM</td>
+      <td>NS</td>
+      <td>Y</td>
+      <td>Q</td>
+      <td>RW</td>
+      <td>...</td>
+      <td>0.012921</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>30992</td>
+      <td>51.74</td>
+      <td>PLXS</td>
+      <td>PLEXUS CORP; COM NONE; CONS</td>
+      <td>0.001269</td>
+      <td>0.001796</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>10044</td>
+      <td>7992</td>
+      <td>2019-01-02</td>
+      <td>CORP</td>
+      <td>EQTY</td>
+      <td>COM</td>
+      <td>NS</td>
+      <td>Y</td>
+      <td>Q</td>
+      <td>RW</td>
+      <td>...</td>
+      <td>0.012887</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>5949</td>
+      <td>8.63</td>
+      <td>RMCF</td>
+      <td>ROCKY MOUNTAIN CHOC FAC INC NEW; COM NONE; CONS</td>
+      <td>0.001269</td>
+      <td>0.001796</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>10051</td>
+      <td>7999</td>
+      <td>2019-01-02</td>
+      <td>CORP</td>
+      <td>EQTY</td>
+      <td>COM</td>
+      <td>NS</td>
+      <td>Y</td>
+      <td>N</td>
+      <td>RW</td>
+      <td>...</td>
+      <td>-0.003694</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>36848</td>
+      <td>18.88</td>
+      <td>HNGR</td>
+      <td>HANGER INC; COM NONE; CONS</td>
+      <td>0.001269</td>
+      <td>0.001796</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 22 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+Index: 5981476 entries, 0 to 481475
+Data columns (total 22 columns):
+ #   Column            Dtype         
+---  ------            -----         
+ 0   permno            Int64         
+ 1   permco            Int64         
+ 2   dlycaldt          datetime64[ns]
+ 3   issuertype        string        
+ 4   securitytype      string        
+ 5   securitysubtype   string        
+ 6   sharetype         string        
+ 7   usincflg          string        
+ 8   primaryexch       string        
+ 9   conditionaltype   string        
+ 10  tradingstatusflg  string        
+ 11  dlyret            Float64       
+ 12  dlyretx           Float64       
+ 13  dlyreti           Float64       
+ 14  dlyorddivamt      Float64       
+ 15  dlynonorddivamt   Float64       
+ 16  shrout            Int64         
+ 17  dlyprc            Float64       
+ 18  ticker            string        
+ 19  securitynm        string        
+ 20  sprtrn            Float64       
+ 21  vwretd            Float64       
+dtypes: Float64(8), Int64(3), datetime64[ns](1), string(10)
+memory usage: 1.1 GB
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="data-summary-and-exploration">
+<h2>Data Summary and Exploration<a class="headerlink" href="#data-summary-and-exploration" title="Link to this heading">#</a></h2>
+<p>Let’s look at some summary statistics to understand our dataset.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s look at some summary statistics</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Data Summary ===&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Date range: </span><span class="si">{</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of unique stocks: </span><span class="si">{</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total observations: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Data Summary ===
+Date range: 2019-01-02 00:00:00 to 2024-12-31 00:00:00
+Number of unique stocks: 5488
+Total observations: 5981476
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="identifying-well-known-stocks">
+<h2>Identifying Well-Known Stocks<a class="headerlink" href="#identifying-well-known-stocks" title="Link to this heading">#</a></h2>
+<p>We’ll look for stocks with recognizable tickers and good data coverage for our analysis.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s identify some well-known stocks for analysis</span>
+<span class="c1"># We&#39;ll look for stocks with recognizable tickers and good data coverage</span>
+<span class="n">stock_summary</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="s1">&#39;securitynm&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span>
+    <span class="s1">&#39;dlycaldt&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;dlyret&#39;</span><span class="p">:</span> <span class="s1">&#39;count&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;dlyorddivamt&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="p">})</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">stock_summary</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;obs_count&#39;</span><span class="p">,</span> <span class="s1">&#39;start_date&#39;</span><span class="p">,</span> <span class="s1">&#39;end_date&#39;</span><span class="p">,</span> <span class="s1">&#39;return_obs&#39;</span><span class="p">,</span> <span class="s1">&#39;dividend_days&#39;</span><span class="p">]</span>
+<span class="n">stock_summary</span> <span class="o">=</span> <span class="n">stock_summary</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+<span class="c1"># Filter for stocks with good data coverage and recognizable names</span>
+<span class="n">good_stocks</span> <span class="o">=</span> <span class="n">stock_summary</span><span class="p">[</span>
+    <span class="p">(</span><span class="n">stock_summary</span><span class="p">[</span><span class="s1">&#39;obs_count&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">500</span><span class="p">)</span> <span class="o">&amp;</span>  <span class="c1"># At least 500 observations</span>
+    <span class="p">(</span><span class="n">stock_summary</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">())</span> <span class="o">&amp;</span>   <span class="c1"># Has a ticker</span>
+    <span class="p">(</span><span class="n">stock_summary</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>       <span class="c1"># Ticker is not empty</span>
+<span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;obs_count&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Top Stocks by Data Coverage ===&quot;</span><span class="p">)</span>
+<span class="n">good_stocks</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Top Stocks by Data Coverage ===
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>permno</th>
+      <th>ticker</th>
+      <th>securitynm</th>
+      <th>obs_count</th>
+      <th>start_date</th>
+      <th>end_date</th>
+      <th>return_obs</th>
+      <th>dividend_days</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>4193</th>
+      <td>32651</td>
+      <td>HL</td>
+      <td>HECLA MINING CO; COM NONE; CONS</td>
+      <td>1526</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1526</td>
+      <td>40.0</td>
+    </tr>
+    <tr>
+      <th>1624</th>
+      <td>17743</td>
+      <td>WRB</td>
+      <td>BERKLEY W R CORP; COM NONE; CONS</td>
+      <td>1520</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1520</td>
+      <td>35.0</td>
+    </tr>
+    <tr>
+      <th>1240</th>
+      <td>16437</td>
+      <td>CWH</td>
+      <td>CAMPING WORLD HOLDINGS INC; COM A; CONS</td>
+      <td>1520</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1520</td>
+      <td>34.0</td>
+    </tr>
+    <tr>
+      <th>1004</th>
+      <td>15540</td>
+      <td>RILY</td>
+      <td>B RILEY FINANCIAL INC; COM NONE; CONS</td>
+      <td>1519</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1519</td>
+      <td>31.0</td>
+    </tr>
+    <tr>
+      <th>401</th>
+      <td>13641</td>
+      <td>FANG</td>
+      <td>DIAMONDBACK ENERGY INC; COM NONE; CONS</td>
+      <td>1519</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1519</td>
+      <td>33.0</td>
+    </tr>
+    <tr>
+      <th>4195</th>
+      <td>32707</td>
+      <td>HP</td>
+      <td>HELMERICH &amp; PAYNE INC; COM NONE; CONS</td>
+      <td>1518</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1518</td>
+      <td>32.0</td>
+    </tr>
+    <tr>
+      <th>4337</th>
+      <td>47626</td>
+      <td>CNA</td>
+      <td>C N A FINANCIAL CORP; COM NONE; CONS</td>
+      <td>1516</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1516</td>
+      <td>30.0</td>
+    </tr>
+    <tr>
+      <th>4697</th>
+      <td>76266</td>
+      <td>PRK</td>
+      <td>PARK NATIONAL CORP; COM NONE; CONS</td>
+      <td>1516</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1516</td>
+      <td>30.0</td>
+    </tr>
+    <tr>
+      <th>4863</th>
+      <td>78211</td>
+      <td>UVE</td>
+      <td>UNIVERSAL INSURANCE HOLDINGS INC; COM NONE; CONS</td>
+      <td>1516</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1516</td>
+      <td>30.0</td>
+    </tr>
+    <tr>
+      <th>70</th>
+      <td>10901</td>
+      <td>ITIC</td>
+      <td>INVESTORS TITLE CO; COM NONE; CONS</td>
+      <td>1516</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1516</td>
+      <td>30.0</td>
+    </tr>
+    <tr>
+      <th>4040</th>
+      <td>25129</td>
+      <td>CBSH</td>
+      <td>COMMERCE BANCSHARES INC; COM NONE; CONS</td>
+      <td>1516</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1516</td>
+      <td>30.0</td>
+    </tr>
+    <tr>
+      <th>4817</th>
+      <td>77584</td>
+      <td>BKE</td>
+      <td>BUCKLE INC; COM NONE; CONS</td>
+      <td>1516</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1516</td>
+      <td>28.0</td>
+    </tr>
+    <tr>
+      <th>439</th>
+      <td>13802</td>
+      <td>APAM</td>
+      <td>ARTISAN PARTNERS ASSET MGMT INC; COM A; CONS</td>
+      <td>1516</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1516</td>
+      <td>30.0</td>
+    </tr>
+    <tr>
+      <th>4556</th>
+      <td>65294</td>
+      <td>RLI</td>
+      <td>R L I CORP; COM NONE; CONS</td>
+      <td>1516</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1516</td>
+      <td>30.0</td>
+    </tr>
+    <tr>
+      <th>427</th>
+      <td>13766</td>
+      <td>BCC</td>
+      <td>BOISE CASCADE CO; COM NONE; CONS</td>
+      <td>1516</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1516</td>
+      <td>32.0</td>
+    </tr>
+    <tr>
+      <th>4208</th>
+      <td>34497</td>
+      <td>NPK</td>
+      <td>NATIONAL PRESTO INDS INC; COM NONE; CONS</td>
+      <td>1516</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1516</td>
+      <td>12.0</td>
+    </tr>
+    <tr>
+      <th>5677</th>
+      <td>88341</td>
+      <td>HWBK</td>
+      <td>HAWTHORN BANCSHARES INC; COM NONE; CONS</td>
+      <td>1515</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1515</td>
+      <td>29.0</td>
+    </tr>
+    <tr>
+      <th>5640</th>
+      <td>87725</td>
+      <td>IIIN</td>
+      <td>INSTEEL INDUSTRIES INC; COM NONE; CONS</td>
+      <td>1515</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1515</td>
+      <td>29.0</td>
+    </tr>
+    <tr>
+      <th>168</th>
+      <td>12189</td>
+      <td>HIFS</td>
+      <td>HINGHAM INSTITUTION FOR SVGS MA; COM NONE; CONS</td>
+      <td>1515</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1515</td>
+      <td>29.0</td>
+    </tr>
+    <tr>
+      <th>5582</th>
+      <td>87137</td>
+      <td>DVN</td>
+      <td>DEVON ENERGY CORP NEW; COM NONE; CONS</td>
+      <td>1515</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1515</td>
+      <td>30.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="selecting-stocks-for-analysis">
+<h2>Selecting Stocks for Analysis<a class="headerlink" href="#selecting-stocks-for-analysis" title="Link to this heading">#</a></h2>
+<p>Let’s select three stocks for analysis:</p>
+<ol class="arabic simple">
+<li><p>A dividend-paying stock (likely a utility or financial)</p></li>
+<li><p>A growth stock that pays no dividends (likely tech)</p></li>
+<li><p>A stock in between</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s look for some specific well-known stocks</span>
+<span class="n">target_tickers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;AAPL&#39;</span><span class="p">,</span> <span class="s1">&#39;MSFT&#39;</span><span class="p">,</span> <span class="s1">&#39;JNJ&#39;</span><span class="p">,</span> <span class="s1">&#39;PG&#39;</span><span class="p">,</span> <span class="s1">&#39;KO&#39;</span><span class="p">,</span> <span class="s1">&#39;XOM&#39;</span><span class="p">,</span> <span class="s1">&#39;JPM&#39;</span><span class="p">,</span> <span class="s1">&#39;WMT&#39;</span><span class="p">,</span> <span class="s1">&#39;NVDA&#39;</span><span class="p">,</span> <span class="s1">&#39;TSLA&#39;</span><span class="p">]</span>
+<span class="n">available_stocks</span> <span class="o">=</span> <span class="n">good_stocks</span><span class="p">[</span><span class="n">good_stocks</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target_tickers</span><span class="p">)]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Available Target Stocks ===&quot;</span><span class="p">)</span>
+<span class="n">available_stocks</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Available Target Stocks ===
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>permno</th>
+      <th>ticker</th>
+      <th>securitynm</th>
+      <th>obs_count</th>
+      <th>start_date</th>
+      <th>end_date</th>
+      <th>return_obs</th>
+      <th>dividend_days</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>3375</th>
+      <td>22111</td>
+      <td>JNJ</td>
+      <td>JOHNSON &amp; JOHNSON; COM NONE; CONS</td>
+      <td>1510</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1510</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>4430</th>
+      <td>55976</td>
+      <td>WMT</td>
+      <td>WALMART INC; COM NONE; CONS</td>
+      <td>1510</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1510</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>4344</th>
+      <td>47896</td>
+      <td>JPM</td>
+      <td>JPMORGAN CHASE &amp; CO; COM NONE; CONS</td>
+      <td>1510</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1510</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>5516</th>
+      <td>86580</td>
+      <td>NVDA</td>
+      <td>NVIDIA CORP; COM NONE; CONS</td>
+      <td>1510</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1510</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>6450</th>
+      <td>93436</td>
+      <td>TSLA</td>
+      <td>TESLA INC; COM NONE; CONS</td>
+      <td>1510</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1510</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>141</th>
+      <td>11850</td>
+      <td>XOM</td>
+      <td>EXXON MOBIL CORP; COM NONE; CONS</td>
+      <td>1510</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1510</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>682</th>
+      <td>14593</td>
+      <td>AAPL</td>
+      <td>APPLE INC; COM NONE; CONS</td>
+      <td>1510</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1510</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>1792</th>
+      <td>18163</td>
+      <td>PG</td>
+      <td>PROCTER &amp; GAMBLE CO; COM NONE; CONS</td>
+      <td>1510</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1510</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>91</th>
+      <td>11308</td>
+      <td>KO</td>
+      <td>COCA COLA CO; COM NONE; CONS</td>
+      <td>1510</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1510</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>10107</td>
+      <td>MSFT</td>
+      <td>MICROSOFT CORP; COM NONE; CONS</td>
+      <td>1510</td>
+      <td>2019-01-02</td>
+      <td>2024-12-31</td>
+      <td>1510</td>
+      <td>24.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Select three stocks for analysis</span>
+<span class="n">selected_stocks</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;AAPL&#39;</span><span class="p">,</span> <span class="s1">&#39;JNJ&#39;</span><span class="p">,</span> <span class="s1">&#39;TSLA&#39;</span><span class="p">]</span>  <span class="c1"># Apple (tech, some dividends), J&amp;J (dividend payer), Tesla (no dividends)</span>
+
+<span class="c1"># Filter data for selected stocks and market</span>
+<span class="n">selected_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">selected_stocks</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">market_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="s1">&#39;sprtrn&#39;</span><span class="p">,</span> <span class="s1">&#39;vwretd&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="data-quality-check">
+<h2>Data Quality Check<a class="headerlink" href="#data-quality-check" title="Link to this heading">#</a></h2>
+<p>Let’s verify our data quality and check for any duplicate entries.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Debug: Check for duplicate dates in selected data</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Data Quality Check ===&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected stocks data shape: </span><span class="si">{</span><span class="n">selected_data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Duplicate ticker-date combinations: </span><span class="si">{</span><span class="n">selected_data</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Market data shape: </span><span class="si">{</span><span class="n">market_data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Duplicate dates in market data: </span><span class="si">{</span><span class="n">market_data</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Show sample of selected data</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Sample of selected data:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">selected_data</span><span class="p">[[</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="s1">&#39;dlyret&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Data Quality Check ===
+Selected stocks data shape: (4530, 22)
+Duplicate ticker-date combinations: 0
+Market data shape: (1510, 3)
+Duplicate dates in market data: 0
+
+Sample of selected data:
+      ticker   dlycaldt    dlyret
+568     AAPL 2019-01-02  0.001141
+1537     JNJ 2019-01-02 -0.010074
+3592    TSLA 2019-01-02 -0.068149
+4161    AAPL 2019-01-03 -0.099607
+5129     JNJ 2019-01-03  -0.01589
+7184    TSLA 2019-01-03 -0.031472
+7754    AAPL 2019-01-04  0.042689
+8721     JNJ 2019-01-04  0.016783
+10776   TSLA 2019-01-04  0.057697
+11345   AAPL 2019-01-07 -0.002226
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="calculating-cumulative-returns">
+<h2>Calculating Cumulative Returns<a class="headerlink" href="#calculating-cumulative-returns" title="Link to this heading">#</a></h2>
+<p>Now let’s calculate cumulative returns for our selected stocks to analyze their performance over time.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">calculate_cumulative_returns</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">return_col</span><span class="o">=</span><span class="s1">&#39;dlyret&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate cumulative returns for each stock&quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="s1">&#39;dlycaldt&#39;</span><span class="p">])</span>
+    
+    <span class="c1"># Handle potential duplicate dates by taking the last observation for each ticker-date combination</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="s1">&#39;dlycaldt&#39;</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s1">&#39;last&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Calculate cumulative returns (1 + return) for each stock using a safer approach</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;cumret&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Initialize with 1</span>
+    
+    <span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ticker</span>
+        <span class="n">returns</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="n">return_col</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">cumulative</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">returns</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;cumret&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cumulative</span>
+    
+    <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate cumulative returns</span>
+<span class="n">stock_cumret</span> <span class="o">=</span> <span class="n">calculate_cumulative_returns</span><span class="p">(</span><span class="n">selected_data</span><span class="p">)</span>
+<span class="n">market_cumret</span> <span class="o">=</span> <span class="n">market_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">market_cumret</span><span class="p">[</span><span class="s1">&#39;cumret&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">market_cumret</span><span class="p">[</span><span class="s1">&#39;sprtrn&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="plot-1-matplotlib-cumulative-returns-comparison">
+<h2>Plot 1: Matplotlib - Cumulative Returns Comparison<a class="headerlink" href="#plot-1-matplotlib-cumulative-returns-comparison" title="Link to this heading">#</a></h2>
+<p>Let’s start with a traditional matplotlib plot to visualize the cumulative returns.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot 1: Matplotlib - Cumulative Returns Comparison</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8&#39;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">selected_stocks</span><span class="p">:</span>
+    <span class="n">ticker_data</span> <span class="o">=</span> <span class="n">stock_cumret</span><span class="p">[</span><span class="n">stock_cumret</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ticker</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ticker_data</span><span class="p">[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">],</span> <span class="n">ticker_data</span><span class="p">[</span><span class="s1">&#39;cumret&#39;</span><span class="p">],</span> 
+             <span class="n">label</span><span class="o">=</span><span class="n">ticker</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Add market portfolio</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">market_cumret</span><span class="p">[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">],</span> <span class="n">market_cumret</span><span class="p">[</span><span class="s1">&#39;cumret&#39;</span><span class="p">],</span> 
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S&amp;P 500&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Cumulative Returns Comparison (2019-2025)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Cumulative Return (1 = $1 invested)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/d5a6647885975c9ff6fd68ae808f034ddf5f5f6f7f29dbf76e776119a032c300.png" src="../_images/d5a6647885975c9ff6fd68ae808f034ddf5f5f6f7f29dbf76e776119a032c300.png" />
+</div>
+</div>
+</section>
+<section id="plot-2-seaborn-cumulative-returns-with-better-styling">
+<h2>Plot 2: Seaborn - Cumulative Returns with Better Styling<a class="headerlink" href="#plot-2-seaborn-cumulative-returns-with-better-styling" title="Link to this heading">#</a></h2>
+<p>Now let’s use Seaborn for enhanced styling and aesthetics.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot 2: Seaborn - Cumulative Returns with better styling</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="s2">&quot;husl&quot;</span><span class="p">)</span>
+
+<span class="c1"># Prepare data for seaborn</span>
+<span class="n">plot_data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">selected_stocks</span><span class="p">:</span>
+    <span class="n">ticker_data</span> <span class="o">=</span> <span class="n">stock_cumret</span><span class="p">[</span><span class="n">stock_cumret</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ticker</span><span class="p">][[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="s1">&#39;cumret&#39;</span><span class="p">]]</span>
+    <span class="n">ticker_data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span>
+    <span class="n">plot_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ticker_data</span><span class="p">)</span>
+
+<span class="c1"># Add market data</span>
+<span class="n">market_plot_data</span> <span class="o">=</span> <span class="n">market_cumret</span><span class="p">[[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="s1">&#39;cumret&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">market_plot_data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;S&amp;P 500&#39;</span>
+<span class="n">plot_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">market_plot_data</span><span class="p">)</span>
+
+<span class="n">plot_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">plot_data</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;cumret&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span> 
+             <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Cumulative Returns: Selected Stocks vs S&amp;P 500&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Cumulative Return&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Asset&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/4a22c4acee7fa02442fd4bcb803c1a012b666207f67ade86d3ceaf499a892880.png" src="../_images/4a22c4acee7fa02442fd4bcb803c1a012b666207f67ade86d3ceaf499a892880.png" />
+</div>
+</div>
+</section>
+<section id="plot-3-plotly-express-interactive-cumulative-returns">
+<h2>Plot 3: Plotly Express - Interactive Cumulative Returns<a class="headerlink" href="#plot-3-plotly-express-interactive-cumulative-returns" title="Link to this heading">#</a></h2>
+<p>Finally, let’s create an interactive plot using Plotly Express for enhanced user experience.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot 3: Plotly Express - Interactive Cumulative Returns</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">plot_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;cumret&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span>
+              <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Interactive Cumulative Returns Comparison&#39;</span><span class="p">,</span>
+              <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">:</span> <span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="s1">&#39;cumret&#39;</span><span class="p">:</span> <span class="s1">&#39;Cumulative Return&#39;</span><span class="p">,</span> <span class="s1">&#39;ticker&#39;</span><span class="p">:</span> <span class="s1">&#39;Asset&#39;</span><span class="p">},</span>
+              <span class="n">line_shape</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">title_font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+    <span class="n">xaxis_title_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">yaxis_title_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">legend_title_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">hovermode</span><span class="o">=</span><span class="s1">&#39;x unified&#39;</span>
+<span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+</div>
+</div>
+</section>
+<section id="dividend-analysis">
+<h2>Dividend Analysis<a class="headerlink" href="#dividend-analysis" title="Link to this heading">#</a></h2>
+<p>Now let’s analyze dividends to understand the income component of our selected stocks.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Now let&#39;s analyze dividends</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Dividend Analysis ===&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Dividend Analysis ===
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">calculate_cumulative_dividends</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate cumulative dividends for each stock&quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="s1">&#39;dlycaldt&#39;</span><span class="p">])</span>
+    
+    <span class="c1"># Handle potential duplicate dates by taking the last observation for each ticker-date combination</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="s1">&#39;dlycaldt&#39;</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s1">&#39;last&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Sum up all dividend amounts (ordinary + non-ordinary)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;total_div&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;dlyorddivamt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;dlynonorddivamt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="c1"># Calculate cumulative dividends using a safer approach</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;cumdiv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Initialize with 0</span>
+    
+    <span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ticker</span>
+        <span class="n">dividends</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;total_div&#39;</span><span class="p">]</span>
+        <span class="n">cumulative</span> <span class="o">=</span> <span class="n">dividends</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;cumdiv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cumulative</span>
+    
+    <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate cumulative dividends</span>
+<span class="n">stock_cumdiv</span> <span class="o">=</span> <span class="n">calculate_cumulative_dividends</span><span class="p">(</span><span class="n">selected_data</span><span class="p">)</span>
+
+<span class="c1"># Get dividend summary</span>
+<span class="n">div_summary</span> <span class="o">=</span> <span class="n">stock_cumdiv</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;ticker&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span>
+    <span class="s1">&#39;total_div&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;cumdiv&#39;</span><span class="p">:</span> <span class="s1">&#39;max&#39;</span>
+<span class="p">})</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">div_summary</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;total_dividends&#39;</span><span class="p">,</span> <span class="s1">&#39;dividend_days&#39;</span><span class="p">,</span> <span class="s1">&#39;cumulative_dividends&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">div_summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>        total_dividends  dividend_days  cumulative_dividends
+ticker                                                      
+AAPL               9.37           1510                  9.37
+JNJ               25.98           1510                 25.98
+TSLA                0.0           1510                  0.00
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="plot-4-matplotlib-cumulative-dividends">
+<h2>Plot 4: Matplotlib - Cumulative Dividends<a class="headerlink" href="#plot-4-matplotlib-cumulative-dividends" title="Link to this heading">#</a></h2>
+<p>Let’s visualize the cumulative dividends using matplotlib.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot 4: Matplotlib - Cumulative Dividends</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">selected_stocks</span><span class="p">:</span>
+    <span class="n">ticker_data</span> <span class="o">=</span> <span class="n">stock_cumdiv</span><span class="p">[</span><span class="n">stock_cumdiv</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ticker</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ticker_data</span><span class="p">[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">],</span> <span class="n">ticker_data</span><span class="p">[</span><span class="s1">&#39;cumdiv&#39;</span><span class="p">],</span> 
+             <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s1"> (Total: $</span><span class="si">{</span><span class="n">ticker_data</span><span class="p">[</span><span class="s2">&quot;cumdiv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> 
+             <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Cumulative Dividends Paid (2019-2025)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Cumulative Dividends ($)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/37cc9975689e9217bda26ae877cd56d4e4f638eeea19acb213ff27e52280e1c3.png" src="../_images/37cc9975689e9217bda26ae877cd56d4e4f638eeea19acb213ff27e52280e1c3.png" />
+</div>
+</div>
+</section>
+<section id="plot-5-seaborn-dividend-comparison">
+<h2>Plot 5: Seaborn - Dividend Comparison<a class="headerlink" href="#plot-5-seaborn-dividend-comparison" title="Link to this heading">#</a></h2>
+<p>Now let’s use Seaborn for the dividend visualization.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot 5: Seaborn - Dividend Comparison</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
+
+<span class="c1"># Prepare dividend data for seaborn</span>
+<span class="n">div_plot_data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">selected_stocks</span><span class="p">:</span>
+    <span class="n">ticker_data</span> <span class="o">=</span> <span class="n">stock_cumdiv</span><span class="p">[</span><span class="n">stock_cumdiv</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ticker</span><span class="p">][[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="s1">&#39;cumdiv&#39;</span><span class="p">]]</span>
+    <span class="n">ticker_data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span>
+    <span class="n">div_plot_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ticker_data</span><span class="p">)</span>
+
+<span class="n">div_plot_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">div_plot_data</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">div_plot_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;cumdiv&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span> 
+             <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Cumulative Dividends: Selected Stocks&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Cumulative Dividends ($)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Stock&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/1e56c11a6346f783658436a6130b3dc9723b6a9279130bf4149ba7ee0b7c65cd.png" src="../_images/1e56c11a6346f783658436a6130b3dc9723b6a9279130bf4149ba7ee0b7c65cd.png" />
+</div>
+</div>
+</section>
+<section id="plot-6-plotly-express-interactive-dividends">
+<h2>Plot 6: Plotly Express - Interactive Dividends<a class="headerlink" href="#plot-6-plotly-express-interactive-dividends" title="Link to this heading">#</a></h2>
+<p>Let’s create an interactive dividend plot with Plotly.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot 6: Plotly Express - Interactive Dividends</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">div_plot_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;cumdiv&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span>
+              <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Interactive Cumulative Dividends&#39;</span><span class="p">,</span>
+              <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">:</span> <span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="s1">&#39;cumdiv&#39;</span><span class="p">:</span> <span class="s1">&#39;Cumulative Dividends ($)&#39;</span><span class="p">,</span> <span class="s1">&#39;ticker&#39;</span><span class="p">:</span> <span class="s1">&#39;Stock&#39;</span><span class="p">},</span>
+              <span class="n">line_shape</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">title_font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+    <span class="n">xaxis_title_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">yaxis_title_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">legend_title_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">hovermode</span><span class="o">=</span><span class="s1">&#39;x unified&#39;</span>
+<span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+</div>
+</div>
+</section>
+<section id="rolling-volatility-analysis">
+<h2>Rolling Volatility Analysis<a class="headerlink" href="#rolling-volatility-analysis" title="Link to this heading">#</a></h2>
+<p>Now let’s analyze the rolling volatility of our selected stocks to understand their risk characteristics over time.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Now let&#39;s calculate rolling volatility (3-month window)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Rolling Volatility Analysis ===&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Rolling Volatility Analysis ===
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">calculate_rolling_volatility</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">window_days</span><span class="o">=</span><span class="mi">63</span><span class="p">):</span>  <span class="c1"># ~3 months (63 trading days)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate rolling volatility for each stock&quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="s1">&#39;dlycaldt&#39;</span><span class="p">])</span>
+    
+    <span class="c1"># Handle potential duplicate dates by taking the last observation for each ticker-date combination</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="s1">&#39;dlycaldt&#39;</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s1">&#39;last&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Calculate rolling standard deviation of returns using a safer approach</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;rolling_vol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    
+    <span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ticker</span>
+        <span class="n">returns</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;dlyret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1"># Calculate rolling standard deviation</span>
+        <span class="n">rolling_std</span> <span class="o">=</span> <span class="n">returns</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window_days</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;rolling_vol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rolling_std</span>
+        
+        <span class="c1"># Annualize volatility (multiply by sqrt(252) for daily data)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rolling_std</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate rolling volatility for stocks</span>
+<span class="n">stock_vol</span> <span class="o">=</span> <span class="n">calculate_rolling_volatility</span><span class="p">(</span><span class="n">selected_data</span><span class="p">)</span>
+
+<span class="c1"># Calculate rolling volatility for market</span>
+<span class="n">market_vol</span> <span class="o">=</span> <span class="n">market_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">market_vol</span><span class="p">[</span><span class="s1">&#39;rolling_vol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">market_vol</span><span class="p">[</span><span class="s1">&#39;sprtrn&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span>
+    <span class="n">window</span><span class="o">=</span><span class="mi">63</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="n">market_vol</span><span class="p">[</span><span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">market_vol</span><span class="p">[</span><span class="s1">&#39;rolling_vol&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="plot-7-matplotlib-rolling-volatility">
+<h2>Plot 7: Matplotlib - Rolling Volatility<a class="headerlink" href="#plot-7-matplotlib-rolling-volatility" title="Link to this heading">#</a></h2>
+<p>Let’s visualize the rolling volatility using matplotlib.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot 7: Matplotlib - Rolling Volatility</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">selected_stocks</span><span class="p">:</span>
+    <span class="n">ticker_data</span> <span class="o">=</span> <span class="n">stock_vol</span><span class="p">[</span><span class="n">stock_vol</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ticker</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ticker_data</span><span class="p">[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">],</span> <span class="n">ticker_data</span><span class="p">[</span><span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> 
+             <span class="n">label</span><span class="o">=</span><span class="n">ticker</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+<span class="c1"># Add market volatility</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">market_vol</span><span class="p">[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">],</span> <span class="n">market_vol</span><span class="p">[</span><span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> 
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S&amp;P 500&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rolling 3-Month Volatility (Annualized)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Volatility (%)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/40e59415af8b6eac5f394d935207795a5ecc2ed7abfb54214e6afda8094c201e.png" src="../_images/40e59415af8b6eac5f394d935207795a5ecc2ed7abfb54214e6afda8094c201e.png" />
+</div>
+</div>
+</section>
+<section id="plot-8-seaborn-volatility-comparison">
+<h2>Plot 8: Seaborn - Volatility Comparison<a class="headerlink" href="#plot-8-seaborn-volatility-comparison" title="Link to this heading">#</a></h2>
+<p>Now let’s use Seaborn for the volatility visualization.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot 8: Seaborn - Volatility Comparison</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
+
+<span class="c1"># Prepare volatility data for seaborn</span>
+<span class="n">vol_plot_data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">selected_stocks</span><span class="p">:</span>
+    <span class="n">ticker_data</span> <span class="o">=</span> <span class="n">stock_vol</span><span class="p">[</span><span class="n">stock_vol</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ticker</span><span class="p">][[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">]]</span>
+    <span class="n">ticker_data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span>
+    <span class="n">vol_plot_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ticker_data</span><span class="p">)</span>
+
+<span class="c1"># Add market volatility</span>
+<span class="n">market_vol_data</span> <span class="o">=</span> <span class="n">market_vol</span><span class="p">[[</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">market_vol_data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;S&amp;P 500&#39;</span>
+<span class="n">vol_plot_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">market_vol_data</span><span class="p">)</span>
+
+<span class="n">vol_plot_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">vol_plot_data</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">vol_plot_df</span><span class="p">[</span><span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vol_plot_df</span><span class="p">[</span><span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span>  <span class="c1"># Convert to percentage</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">vol_plot_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span> 
+             <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rolling 3-Month Volatility: Stocks vs S&amp;P 500&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Volatility (%)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Asset&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/d80c905892bcbf007a04aaad069ecca6cfd673770af9c6c81294de9dd82057d1.png" src="../_images/d80c905892bcbf007a04aaad069ecca6cfd673770af9c6c81294de9dd82057d1.png" />
+</div>
+</div>
+</section>
+<section id="plot-9-plotly-express-interactive-volatility">
+<h2>Plot 9: Plotly Express - Interactive Volatility<a class="headerlink" href="#plot-9-plotly-express-interactive-volatility" title="Link to this heading">#</a></h2>
+<p>Finally, let’s create an interactive volatility plot with Plotly.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot 9: Plotly Express - Interactive Volatility</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">vol_plot_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span>
+              <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Interactive Rolling Volatility Analysis&#39;</span><span class="p">,</span>
+              <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dlycaldt&#39;</span><span class="p">:</span> <span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">:</span> <span class="s1">&#39;Volatility (%)&#39;</span><span class="p">,</span> <span class="s1">&#39;ticker&#39;</span><span class="p">:</span> <span class="s1">&#39;Asset&#39;</span><span class="p">},</span>
+              <span class="n">line_shape</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">title_font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+    <span class="n">xaxis_title_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">yaxis_title_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">legend_title_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">hovermode</span><span class="o">=</span><span class="s1">&#39;x unified&#39;</span>
+<span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+</div>
+</div>
+</section>
+<section id="summary-statistics">
+<h2>Summary Statistics<a class="headerlink" href="#summary-statistics" title="Link to this heading">#</a></h2>
+<p>Let’s compile a comprehensive summary of our analysis results.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Summary statistics</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Summary Statistics ===&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cumulative Returns (as of latest date):&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">selected_stocks</span><span class="p">:</span>
+    <span class="n">latest_ret</span> <span class="o">=</span> <span class="n">stock_cumret</span><span class="p">[</span><span class="n">stock_cumret</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ticker</span><span class="p">][</span><span class="s1">&#39;cumret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">latest_ret</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
+
+<span class="n">latest_market_ret</span> <span class="o">=</span> <span class="n">market_cumret</span><span class="p">[</span><span class="s1">&#39;cumret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;S&amp;P 500: </span><span class="si">{</span><span class="n">latest_market_ret</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Total Dividends Paid:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">selected_stocks</span><span class="p">:</span>
+    <span class="n">total_div</span> <span class="o">=</span> <span class="n">stock_cumdiv</span><span class="p">[</span><span class="n">stock_cumdiv</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ticker</span><span class="p">][</span><span class="s1">&#39;cumdiv&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">: $</span><span class="si">{</span><span class="n">total_div</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Average Annualized Volatility (3-month rolling):&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">selected_stocks</span><span class="p">:</span>
+    <span class="n">avg_vol</span> <span class="o">=</span> <span class="n">stock_vol</span><span class="p">[</span><span class="n">stock_vol</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ticker</span><span class="p">][</span><span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">avg_vol</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+<span class="n">avg_market_vol</span> <span class="o">=</span> <span class="n">market_vol</span><span class="p">[</span><span class="s1">&#39;rolling_vol_annual&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;S&amp;P 500: </span><span class="si">{</span><span class="n">avg_market_vol</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Summary Statistics ===
+Cumulative Returns (as of latest date):
+AAPL: 6.65x
+JNJ: 1.32x
+TSLA: 18.20x
+S&amp;P 500: 2.35x
+
+Total Dividends Paid:
+AAPL: $9.37
+JNJ: $25.98
+TSLA: $0.00
+
+Average Annualized Volatility (3-month rolling):
+AAPL: 29.0%
+JNJ: 17.7%
+TSLA: 61.6%
+S&amp;P 500: 17.5%
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="analysis-complete">
+<h2>Analysis Complete<a class="headerlink" href="#analysis-complete" title="Link to this heading">#</a></h2>
+<p>This script demonstrates:</p>
+<ol class="arabic simple">
+<li><p>Matplotlib plotting with pyplot interface</p></li>
+<li><p>Seaborn plotting with enhanced styling</p></li>
+<li><p>Plotly Express for interactive visualizations</p></li>
+<li><p>Cumulative return analysis for selected stocks vs S&amp;P 500</p></li>
+<li><p>Dividend analysis comparing dividend-paying vs non-dividend stocks</p></li>
+<li><p>Rolling volatility analysis using 3-month windows</p></li>
+</ol>
+<p>The analysis provides insights into:</p>
+<ul class="simple">
+<li><p>Performance comparison between different types of stocks</p></li>
+<li><p>Income generation through dividends</p></li>
+<li><p>Risk characteristics over time</p></li>
+<li><p>Interactive visualization capabilities for data exploration
+“””</p></li>
+</ul>
+<p>print(“\n=== Analysis Complete ===”)
+print(“This script demonstrates:”)
+print(“1. Matplotlib plotting with pyplot interface”)
+print(“2. Seaborn plotting with enhanced styling”)
+print(“3. Plotly Express for interactive visualizations”)
+print(“4. Cumulative return analysis for selected stocks vs S&amp;P 500”)
+print(“5. Dividend analysis comparing dividend-paying vs non-dividend stocks”)
+print(“6. Rolling volatility analysis using 3-month windows”)</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="_03_wrds_python_package.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">3.2 Connecting to the WRDS Platform With Python</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="_03_CRSP_market_index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">3.4 CRSP Market Returns Indices</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-source">Data Source</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-crsp-data-structure">Understanding CRSP Data Structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#finding-the-pre-merged-table">Finding the Pre-merged Table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-the-data-query">Defining the Data Query</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-summary-and-exploration">Data Summary and Exploration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identifying-well-known-stocks">Identifying Well-Known Stocks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#selecting-stocks-for-analysis">Selecting Stocks for Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-quality-check">Data Quality Check</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculating-cumulative-returns">Calculating Cumulative Returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-1-matplotlib-cumulative-returns-comparison">Plot 1: Matplotlib - Cumulative Returns Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-2-seaborn-cumulative-returns-with-better-styling">Plot 2: Seaborn - Cumulative Returns with Better Styling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-3-plotly-express-interactive-cumulative-returns">Plot 3: Plotly Express - Interactive Cumulative Returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dividend-analysis">Dividend Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-4-matplotlib-cumulative-dividends">Plot 4: Matplotlib - Cumulative Dividends</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-5-seaborn-dividend-comparison">Plot 5: Seaborn - Dividend Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-6-plotly-express-interactive-dividends">Plot 6: Plotly Express - Interactive Dividends</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rolling-volatility-analysis">Rolling Volatility Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-7-matplotlib-rolling-volatility">Plot 7: Matplotlib - Rolling Volatility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-8-seaborn-volatility-comparison">Plot 8: Seaborn - Volatility Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-9-plotly-express-interactive-volatility">Plot 9: Plotly Express - Interactive Volatility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-statistics">Summary Statistics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-complete">Analysis Complete</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Jeremiah Bejarano
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Jeremiah Bejarano.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
